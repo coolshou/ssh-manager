@@ -2,13 +2,14 @@ import json
 import os
 import shutil
 import subprocess
-from PyQt4 import QtGui
 
-from PyQt4.QtCore import pyqtSlot, SIGNAL, SLOT
-from PyQt4.QtGui import QListWidgetItem
+from PyQt5.QtCore import (pyqtSlot)
+from PyQt5.QtWidgets import (QWidget, QListWidgetItem, QVBoxLayout,
+                             QLabel, QListWidget, QPushButton)
+from PyQt5.QtGui import (QIcon)
 
 
-class SshManager(QtGui.QWidget):
+class SshManager(QWidget):
     # Config
     list_file = 'config.json'
     list_file_template = 'config-dist.json'
@@ -21,7 +22,7 @@ class SshManager(QtGui.QWidget):
     settings_btn = None
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
         # Load configuration
         self.load_config_file()
 
@@ -38,35 +39,31 @@ class SshManager(QtGui.QWidget):
         pos = self.config["window"]  # type: dict
         self.setGeometry(pos["x"], pos["y"], pos["width"], pos["height"])
         self.setWindowTitle('SSH Manager')
-        self.setWindowIcon(QtGui.QIcon('icon.png'))
+        self.setWindowIcon(QIcon('icon.png'))
 
         # setup main layout
-        self.layout = QtGui.QVBoxLayout(self)
+        self.layout = QVBoxLayout(self)
 
         # Setup list label
-        list_label = QtGui.QLabel()
+        list_label = QLabel()
         list_label.setText("Available connections:")
         self.layout.addWidget(list_label)
 
         # Connections list
-        self.list_widget = QtGui.QListWidget(self)
+        self.list_widget = QListWidget(self)
         self.layout.addWidget(self.list_widget)
 
         # Settings button
-        self.settings_btn = QtGui.QPushButton()
+        self.settings_btn = QPushButton()
         self.settings_btn.setText("Settings")
         self.layout.addWidget(self.settings_btn)
 
     def connect_slots(self):
         """ Connect SIGNAL with SLOTS """
-        self.settings_btn.connect(self.settings_btn, SIGNAL("clicked()"), self, SLOT("settings_button_clicked()"))
+        self.settings_btn.clicked.connect(self.settings_button_clicked)
 
-        self.list_widget.connect(
-            self.list_widget,
-            SIGNAL("itemDoubleClicked(QListWidgetItem*)"),
-            self,
-            SLOT("list_widget_item_double_clicked(QListWidgetItem*)")
-        )
+        self.list_widget.itemDoubleClicked.connect(self.list_widget_item_double_clicked)
+
 
     def load_config_file(self):
         """ Load saved connections """
@@ -106,7 +103,7 @@ class SshManager(QtGui.QWidget):
     def return_pressed(self):
         """ SLOT text_edit -> return pressed """
         connect_string = self.text_edit.text()
-        print connect_string
+        print(connect_string)
 
     @pyqtSlot()
     def settings_button_clicked(self):

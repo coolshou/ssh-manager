@@ -1,12 +1,13 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 # simple.py
 
 import sys
-from PyQt4 import QtGui
+from PyQt5.QtWidgets import (QApplication)
 
 from SshManager import SshManager
 
-app = QtGui.QApplication(sys.argv)
+app = QApplication(sys.argv)
 
 sshManager = SshManager()
 sshManager.show()
